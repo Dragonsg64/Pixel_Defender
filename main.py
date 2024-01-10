@@ -18,6 +18,7 @@ pg.display.set_caption("tower defence")
 
 #game variables
 placing_turrets = False
+selected_turret = None
 
 #load images
 #map
@@ -53,6 +54,16 @@ def create_turret(mouse_pos):
             new_turret = Turret(turret_sheet, mouse_tile_x, mouse_tile_y)
             turret_group.add(new_turret)
         
+def select_turret(mouse_pos):
+    mouse_tile_x = mouse_pos[0] // c.TILE_SIZE
+    mouse_tile_y = mouse_pos[1] // c.TILE_SIZE
+    for turret in turret_group:
+        if (mouse_tile_x, mouse_tile_y) == (turret.tile_x, turret.tile_y):
+            return turret
+        
+def clear_selection():
+    for turret in turret_group:
+        turret.selected = False
 
 #create world
 world = World(world_data, map_image)
@@ -81,7 +92,11 @@ while run:
     
     #update groups
     enemy_group.update()
-    turret_group.update()
+    turret_group.update(enemy_group)
+    
+    #highlight selected turret
+    if selected_turret:
+        selected_turret.selected = True
     
     ###############################
     #  DRAWING SECTION
@@ -95,8 +110,9 @@ while run:
     
     #draw groups
     enemy_group.draw(screen)
-    turret_group.draw(screen)
-    
+    for turret in turret_group:
+        turret.draw(screen)
+        
     #draw buttons
     #button for placing turrets
     if turret_button.draw(screen):
@@ -125,8 +141,13 @@ while run:
             mouse_pos = pg.mouse.get_pos()
             #check if mouse is on the game area
             if mouse_pos[0] < c.SCREEN_WIDTH and mouse_pos[1] < c.SCREEN_HEIGHT:
+                #clear selected turrets
+                selected_turret = None
+                clear_selection()
                 if placing_turrets == True:
                     create_turret(mouse_pos)
+                else:
+                    selected_turret = select_turret(mouse_pos)
 
     #update display
     pg.display.flip()
