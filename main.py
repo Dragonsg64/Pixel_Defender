@@ -13,7 +13,7 @@ pg.init()
 clock = pg.time.Clock()
 
 #create game window
-screen = pg.display.set_mode((c.SCREEN_WIDTH + c.SIDE_PANEL, c.SCREEN_HEIGHT))
+screen = pg.display.set_mode((c.SCREEN_WIDTH + c.SIDE_PANEL, c.SCREEN_HEIGHT), pg.FULLSCREEN)
 pg.display.set_caption("tower defence")
 
 #game variables
@@ -49,6 +49,7 @@ upgrade_turret_image = pg.image.load('assets/images/buttons/upgrade_turret.png')
 begin_image = pg.image.load('assets/images/buttons/begin.png').convert_alpha()
 restart_image = pg.image.load('assets/images/buttons/restart.png').convert_alpha()
 fast_forward_image = pg.image.load('assets/images/buttons/fast_forward.png').convert_alpha()
+close_app_image = pg.image.load('assets/images/buttons/close_app.png').convert_alpha()
 #gui
 heart_image = pg.image.load('assets/images/gui/heart.png').convert_alpha()
 coin_image = pg.image.load('assets/images/gui/coin.png').convert_alpha()
@@ -74,10 +75,10 @@ def draw_text(text, font, text_col, x, y):
 def display_data():
     #draw panel
     pg.draw.rect(screen, "maroon", (c.SCREEN_WIDTH, 0, c.SIDE_PANEL, c.SCREEN_HEIGHT))
-    pg.draw.rect(screen, "grey0", (c.SCREEN_WIDTH, 0, c.SIDE_PANEL, 400), 2)
-    screen.blit(logo_image, (c.SCREEN_WIDTH, 400))
+    pg.draw.rect(screen, "grey0", (c.SCREEN_WIDTH, 0, c.SIDE_PANEL, 640), 2)
+    screen.blit(logo_image, (c.SCREEN_WIDTH, 640))
     #display data
-    draw_text("LEVEL: " + str(world.level), text_font, "grey100", c.SCREEN_WIDTH + 10, 10)
+    draw_text("LEVEL: " + str(world.level) + "/15", text_font, "grey100", c.SCREEN_WIDTH + 10, 10)
     screen.blit(heart_image, (c.SCREEN_WIDTH + 10, 35))
     draw_text(str(world.health), text_font, "grey100", c.SCREEN_WIDTH + 50, 40)
     screen.blit(coin_image,(c.SCREEN_WIDTH + 10, 65))
@@ -126,9 +127,10 @@ turret_group = pg.sprite.Group()
 turret_button = Button(c.SCREEN_WIDTH + 30, 120, buy_turret_image, True)
 cancel_button = Button(c.SCREEN_WIDTH + 50, 180, cancel_image, True)
 upgrade_button = Button(c.SCREEN_WIDTH + 5, 180, upgrade_turret_image, True)
-begin_button = Button(c.SCREEN_WIDTH + 60, 300, begin_image, True)
+begin_button = Button(c.SCREEN_WIDTH + 60, 550, begin_image, True)
 restart_button = Button(310, 300, restart_image, True)
 fast_forward_button = Button(c.SCREEN_WIDTH + 50, 300, fast_forward_image, False)
+close_app_button = Button(c.SCREEN_WIDTH + 240, 10, close_app_image, True)
 
 #game loop
 run = True
@@ -140,7 +142,7 @@ while run:
     #  UPDATING SECTION
     ###############################
     
-    if game_over == False:
+    if not game_over :
         #check if player has lost
         if world.health <= 0:
             game_over = True
@@ -230,6 +232,8 @@ while run:
                     if world.money >= c.UPGRADE_COST:
                         selected_turret.upgrade()
                         world.money -= c.UPGRADE_COST
+        if close_app_button.draw(screen):
+            exit()
     else:
         pg.draw.rect(screen, "dodgerblue", (200, 200, 400, 200), border_radius = 30)
         if game_outcome == -1:
