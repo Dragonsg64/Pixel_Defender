@@ -28,6 +28,7 @@ placing_turrets = False
 selected_turret = None
 frame = 0
 BLACK = (0, 0, 0)
+setting_status = False
 
 #load images
 #map
@@ -61,12 +62,12 @@ upgrade_turret_image = pg.image.load('assets/images/buttons/upgrade_turret.png')
 begin_image = pg.image.load('assets/images/buttons/begin.png').convert_alpha()
 restart_image = pg.image.load('assets/images/buttons/restart.png').convert_alpha()
 fast_forward_image = pg.image.load('assets/images/buttons/fast_forward.png').convert_alpha()
+setting_image = pg.image.load('assets/images/buttons/setting.png').convert_alpha()
 close_app_image = pg.image.load('assets/images/buttons/close_app.png').convert_alpha()
+
 #gui
 heart_image = pg.image.load('assets/images/gui/heart.png').convert_alpha()
 logo_image = pg.image.load('assets/images/gui/logo.png').convert_alpha()
-
-#sprite
 
 #load sounds
 shot_fx = pg.mixer.Sound ('assets/audio/shot.wav')
@@ -143,7 +144,8 @@ upgrade_button = Button(constants.SCREEN_WIDTH + 5, 180, upgrade_turret_image, T
 begin_button = Button(constants.SCREEN_WIDTH + 60, 550, begin_image, True)
 restart_button = Button(310, 300, restart_image, True)
 fast_forward_button = Button(constants.SCREEN_WIDTH + 50, 300, fast_forward_image, False)
-close_app_button = Button(constants.SCREEN_WIDTH + 240, 10, close_app_image, True)
+setting_button = Button(constants.SCREEN_WIDTH + 240, 10, setting_image, True)
+close_button = Button(830, 320, close_app_image, True)
 
 #game loop
 run = True
@@ -164,7 +166,7 @@ while run:
         if world.level > constants.TOTAL_LEVELS:
             game_over = True
             game_outcome = 1 #win
-    
+        
         #update groups
         enemy_group.update(world)
         turret_group.update(enemy_group, world)
@@ -253,14 +255,23 @@ while run:
                     if world.money >= constants.UPGRADE_COST:
                         selected_turret.upgrade()
                         world.money -= constants.UPGRADE_COST
-        if close_app_button.draw(screen):
-            exit()
+                        
+        #setting panel
+        if setting_button.draw(screen):
+                setting_status = True
+        if setting_status:
+            pg.draw.rect(screen, "grey50", (300, 300, 600, 400), border_radius = 30)
+            draw_text("SETTING", large_font, "black", 525, 330)
+            #closing button
+            if close_button.draw(screen):
+                setting_status = False
+        
     else:
         pg.draw.rect(screen, "dodgerblue", (200, 200, 400, 200), border_radius = 30)
         if game_outcome == -1:
             draw_text("GAME OVER", large_font, "grey0", 310, 230)
         elif game_outcome == 1:
-             draw_text("YOU WIN!", large_font, "grey0", 315, 230)          
+            draw_text("YOU WIN!", large_font, "grey0", 315, 230)          
         #restart level
         if restart_button.draw(screen):
             game_over = False
@@ -276,6 +287,8 @@ while run:
     
     #event handler
     for event in pg.event.get():
+        #setting program
+        
         #quit program
         if event.type == pg.QUIT:
             run = False

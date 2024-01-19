@@ -42,7 +42,6 @@ class World():
             for enemy in range(enemies_to_spawn):
                 self.enemy_list.append(enemy_type)
         #now randomize the list to shuffle the enemies
-        random.shuffle(self.enemy_list)
         
     def check_level_complete(self):
         if (self.killed_enemies + self.missed_enemies) == len(self.enemy_list):
