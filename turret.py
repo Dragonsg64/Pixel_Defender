@@ -78,7 +78,7 @@ class Turret(pg.sprite.Sprite):
                     self.angle = math.degrees(math.atan2(-y_dist, x_dist))
                     #damage enemy
                     self.target.health -= self.damage
-                    #play sounf effect
+                    #play sound effect
                     self.shot_fx.play()
                     break
     

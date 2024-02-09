@@ -64,10 +64,16 @@ restart_image = pg.image.load('assets/images/buttons/restart.png').convert_alpha
 fast_forward_image = pg.image.load('assets/images/buttons/fast_forward.png').convert_alpha()
 setting_image = pg.image.load('assets/images/buttons/setting.png').convert_alpha()
 close_app_image = pg.image.load('assets/images/buttons/close_app.png').convert_alpha()
+leave_image = pg.image.load('assets/images/buttons/leave.png').convert_alpha()
 
 #gui
 heart_image = pg.image.load('assets/images/gui/heart.png').convert_alpha()
 logo_image = pg.image.load('assets/images/gui/logo.png').convert_alpha()
+
+#background music 
+Background_music = pg.mixer.Sound ('assets/audio/background_music.mp3')
+Background_music.play()
+Background_music.set_volume(0.2)
 
 #load sounds
 shot_fx = pg.mixer.Sound ('assets/audio/shot.wav')
@@ -137,6 +143,7 @@ world.process_enemies()
 enemy_group = pg.sprite.Group()
 turret_group = pg.sprite.Group()
 
+
 #create buttons
 turret_button = Button(constants.SCREEN_WIDTH + 30, 120, buy_turret_image, True)
 cancel_button = Button(constants.SCREEN_WIDTH + 50, 180, cancel_image, True)
@@ -146,6 +153,7 @@ restart_button = Button(310, 300, restart_image, True)
 fast_forward_button = Button(constants.SCREEN_WIDTH + 50, 300, fast_forward_image, False)
 setting_button = Button(constants.SCREEN_WIDTH + 240, 10, setting_image, True)
 close_button = Button(830, 320, close_app_image, True)
+leave_button = Button(525, 600, leave_image, True)
 
 #game loop
 run = True
@@ -265,6 +273,8 @@ while run:
             #closing button
             if close_button.draw(screen):
                 setting_status = False
+            if leave_button.draw(screen):
+                exit()
         
     else:
         pg.draw.rect(screen, "dodgerblue", (200, 200, 400, 200), border_radius = 30)
