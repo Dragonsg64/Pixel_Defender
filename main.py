@@ -28,6 +28,7 @@ last_update = pg.time.get_ticks()
 placing_turrets = False
 selected_turret = None
 frame = 0
+Blue_Cyan = (0, 120, 120)
 BLACK = (0, 0, 0)
 setting_status = False
 
@@ -65,6 +66,7 @@ begin_image = pg.image.load('assets/images/buttons/begin.png').convert_alpha()
 restart_image = pg.image.load('assets/images/buttons/restart.png').convert_alpha()
 fast_forward_image = pg.image.load('assets/images/buttons/fast_forward.png').convert_alpha()
 setting_image = pg.image.load('assets/images/buttons/setting.png').convert_alpha()
+close_menu_image = pg.image.load('assets/images/buttons/close_menu.png').convert_alpha()
 close_app_image = pg.image.load('assets/images/buttons/close_app.png').convert_alpha()
 leave_image = pg.image.load('assets/images/buttons/leave.png').convert_alpha()
 
@@ -74,7 +76,6 @@ logo_image = pg.image.load('assets/images/gui/logo.png').convert_alpha()
 
 #background music 
 Background_music = pg.mixer.Sound ('assets/audio/background_music.mp3')
-Background_music.play()
 Background_music.set_volume(0.2)
 
 #load sounds
@@ -147,7 +148,7 @@ turret_group = pg.sprite.Group()
 
 
 #create buttons
-start_button = Button(constants.SCREEN_WIDTH + 40, 100, start_image, True)
+start_button = Button(550, 300, start_image, True)
 turret_button = Button(constants.SCREEN_WIDTH + 30, 120, buy_turret_image, True)
 cancel_button = Button(constants.SCREEN_WIDTH + 50, 180, cancel_image, True)
 upgrade_button = Button(constants.SCREEN_WIDTH + 5, 180, upgrade_turret_image, True)
@@ -155,19 +156,41 @@ begin_button = Button(constants.SCREEN_WIDTH + 60, 550, begin_image, True)
 restart_button = Button(310, 300, restart_image, True)
 fast_forward_button = Button(constants.SCREEN_WIDTH + 50, 300, fast_forward_image, False)
 setting_button = Button(constants.SCREEN_WIDTH + 240, 10, setting_image, True)
-close_button = Button(830, 320, close_app_image, True)
+close_button = Button(1175, 25, close_app_image, True)
+close_menu_button = Button(830, 320, close_menu_image, True)
 leave_button = Button(525, 600, leave_image, True)
 
 #game loop
 run = True
 while run:
     
-    if game_start == True:
-        screen.fill(BLACK)
+    if game_start == False:
+        screen.fill(Blue_Cyan)
+        
+        #button start the game and play the background music
+        if start_button.draw(screen):
+            game_start = True
+            Background_music.play()
+        
+            #event handler
+        for event in pg.event.get():
+            #setting program
+
+            #quit program
+            if event.type == pg.QUIT:
+                run = False
+            #mouse click
+            if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+                mouse_pos = pg.mouse.get_pos()
+                
+        if close_button.draw(screen):
+            exit()
         
         
     else:
         clock.tick(constants.FPS)
+        
+        
         
         ###############################
         #  UPDATING SECTION
@@ -218,6 +241,7 @@ while run:
             if level_started == False:
                 if begin_button.draw(screen):
                     level_started  = True
+                    
             else:
                 #fast forward option
                 world.game_speed = 1
@@ -279,10 +303,23 @@ while run:
                 pg.draw.rect(screen, "grey50", (300, 300, 600, 400), border_radius = 30)
                 draw_text("SETTING", large_font, "black", 525, 330)
                 #closing button
-                if close_button.draw(screen):
+                if close_menu_button.draw(screen):
                     setting_status = False
                 if leave_button.draw(screen):
-                    exit()
+                    game_start = False
+                    Background_music.stop()
+                    game_over = False
+                    level_started = False
+                    setting_status = False
+                    placing_turrets = None
+                    last_enemy_spawn = pg.time.get_ticks()
+                    world = World(world_data, map_image)
+                    world.process_data()
+                    world.process_enemies()
+                    #empty groups
+                    enemy_group.empty()
+                    turret_group.empty()
+                    
             
         else:
             pg.draw.rect(screen, "dodgerblue", (200, 200, 400, 200), border_radius = 30)
@@ -294,7 +331,8 @@ while run:
             if restart_button.draw(screen):
                 game_over = False
                 level_started = False
-                placing_turrets = None
+                placing_turrets = False
+                select_turret = None
                 last_enemy_spawn = pg.time.get_ticks()
                 world = World(world_data, map_image)
                 world.process_data()
