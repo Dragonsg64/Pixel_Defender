@@ -35,11 +35,16 @@ setting_status = False
 #load images
 #map
 map_image = pg.image.load('levels/map.png').convert_alpha()
-#turret spritesheets
+#canon spritesheets
 turret_spritesheets = []
 for x in range(1, constants.TURRET_LEVELS + 1):
-    turret_sheet = pg.image.load(f'assets/images/turrets/turret_{x}.png').convert_alpha()
-    turret_spritesheets.append(turret_sheet)
+    red_turret_sheet = pg.image.load(f'assets/images/turrets/red_turret_{x}.png').convert_alpha()
+    turret_spritesheets.append(red_turret_sheet)
+#sniper_spritesheets
+for x in range(1, constants.TURRET_LEVELS + 1):
+    purple_turret_sheet = pg.image.load(f'assets/images/turrets/purple_turret_{x}.png').convert_alpha()
+    turret_spritesheets.append(purple_turret_sheet)
+
 #coin spritesheets
 coin_sheet = pg.image.load('assets/images/coins/coin1.png').convert_alpha()
 sprite_sheet = coin.Coin_SpriteSheet(coin_sheet)
@@ -48,7 +53,7 @@ for x in range(constants.COIN_ANIMATION):
     coin_spritesheets.append(sprite_sheet.get_image(x, 33, 32, 1, BLACK))
 
 #individual turret image for mouse cursor
-cursor_turret = pg.image.load('assets/images/turrets/cursor_turret.png').convert_alpha()
+cursor_turret = pg.image.load('assets/images/turrets/red_cursor_turret.png').convert_alpha()
 #enemies
 enemy_images = {
     "weak": pg.image.load('assets/images/enemies/zombie.png').convert_alpha(),
@@ -59,7 +64,8 @@ enemy_images = {
 enemy_image = pg.image.load('assets/images/enemies/zombie.png').convert_alpha()
 #buttons
 start_image = pg.image.load('assets/images/buttons/start.png').convert_alpha()
-buy_turret_image = pg.image.load('assets/images/buttons/buy_turret.png').convert_alpha()
+buy_RedTurret_image = pg.image.load('assets/images/turrets/buy_red_turret.png').convert_alpha()
+buy_PurpleTurret_image = pg.image.load('assets/images/turrets/buy_Purple_turret.png').convert_alpha()
 cancel_image = pg.image.load('assets/images/buttons/cancel.png').convert_alpha()
 upgrade_turret_image = pg.image.load('assets/images/buttons/upgrade_turret.png').convert_alpha()
 begin_image = pg.image.load('assets/images/buttons/begin.png').convert_alpha()
@@ -76,7 +82,7 @@ logo_image = pg.image.load('assets/images/gui/logo.png').convert_alpha()
 
 #background music 
 Background_music = pg.mixer.Sound ('assets/audio/background_music.mp3')
-Background_music.set_volume(0.2)
+Background_music.set_volume(0.05)
 
 #load sounds
 shot_fx = pg.mixer.Sound ('assets/audio/shot.wav')
@@ -98,8 +104,8 @@ def draw_text(text, font, text_col, x, y):
 def display_data():
     #draw panel
     pg.draw.rect(screen, "maroon", (constants.SCREEN_WIDTH, 0, constants.SIDE_PANEL, constants.SCREEN_HEIGHT))
-    pg.draw.rect(screen, "grey0", (constants.SCREEN_WIDTH, 0, constants.SIDE_PANEL, 640), 2)
-    screen.blit(logo_image, (constants.SCREEN_WIDTH, 640))
+    pg.draw.rect(screen, "grey0", (constants.SCREEN_WIDTH, 0, constants.SIDE_PANEL, 740), 2)
+    screen.blit(logo_image, (constants.SCREEN_WIDTH, 740))
     #display data
     draw_text("WAVE: " + str(world.level) + "/15", text_font, "grey100", constants.SCREEN_WIDTH + 10, 10)
     screen.blit(heart_image, (constants.SCREEN_WIDTH + 10, 35))
@@ -125,7 +131,8 @@ def create_turret(mouse_pos):
             turret_group.add(new_turret)
             #dedust cost of turret
             world.money -= constants.BUY_COST
-        
+            print(turret_spritesheets)
+            
 def select_turret(mouse_pos):
     mouse_tile_x = mouse_pos[0] // constants.TILE_SIZE
     mouse_tile_y = mouse_pos[1] // constants.TILE_SIZE
@@ -146,19 +153,19 @@ world.process_enemies()
 enemy_group = pg.sprite.Group()
 turret_group = pg.sprite.Group()
 
-
 #create buttons
-start_button = Button(550, 300, start_image, True)
-turret_button = Button(constants.SCREEN_WIDTH + 30, 120, buy_turret_image, True)
+start_button = Button(840, 415, start_image, True)
+Red_turret_button = Button(constants.SCREEN_WIDTH + 30, 120, buy_RedTurret_image, True)
+Purple_turret_button = Button(constants.SCREEN_WIDTH + 30, 240, buy_PurpleTurret_image, True)
 cancel_button = Button(constants.SCREEN_WIDTH + 50, 180, cancel_image, True)
 upgrade_button = Button(constants.SCREEN_WIDTH + 5, 180, upgrade_turret_image, True)
-begin_button = Button(constants.SCREEN_WIDTH + 60, 550, begin_image, True)
+begin_button = Button(constants.SCREEN_WIDTH + 80, 650, begin_image, True)
 restart_button = Button(310, 300, restart_image, True)
 fast_forward_button = Button(constants.SCREEN_WIDTH + 50, 300, fast_forward_image, False)
 setting_button = Button(constants.SCREEN_WIDTH + 240, 10, setting_image, True)
-close_button = Button(1175, 25, close_app_image, True)
-close_menu_button = Button(830, 320, close_menu_image, True)
-leave_button = Button(525, 600, leave_image, True)
+close_button = Button(1820, 25, close_app_image, True)
+close_menu_button = Button(1170, 330, close_menu_image, True)
+leave_button = Button(875, 600, leave_image, True)
 
 #game loop
 run = True
@@ -270,9 +277,11 @@ while run:
             #for the "turret button" show cost of turret and draw the button
             draw_text(str(constants.BUY_COST), text_font, "grey100", constants.SCREEN_WIDTH + 215, 135)
             screen.blit(coin_spritesheets[frame], (constants.SCREEN_WIDTH + 260, 130))
-            if turret_button.draw(screen):
+            if Red_turret_button.draw(screen):
                 placing_turrets = True
-                print("turret placed")
+                
+            if Purple_turret_button.draw(screen):
+                placing_turrets = True
                 #if placing turrets then show the cancel button as well
             if placing_turrets == True:
                 #show cursor turret
@@ -300,8 +309,8 @@ while run:
             if setting_button.draw(screen):
                     setting_status = True
             if setting_status:
-                pg.draw.rect(screen, "grey50", (300, 300, 600, 400), border_radius = 30)
-                draw_text("SETTING", large_font, "black", 525, 330)
+                pg.draw.rect(screen, "grey50", (650, 300, 600, 400), border_radius = 30)
+                draw_text("SETTING", large_font, "black", 875, 330)
                 #closing button
                 if close_menu_button.draw(screen):
                     setting_status = False

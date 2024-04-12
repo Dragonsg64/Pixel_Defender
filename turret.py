@@ -1,15 +1,15 @@
 import pygame as pg
 import math
 import constants
-from turret_data import TURRET_DATA
+from turret_data import RED_TURRET
 
 class Turret(pg.sprite.Sprite):
     def __init__(self, sprite_sheets, tile_x, tile_y, shot_fx):
         pg.sprite.Sprite.__init__(self)
         self.upgrade_level = 1
-        self.range = TURRET_DATA[self.upgrade_level - 1].get("range")
-        self.cooldown = TURRET_DATA[self.upgrade_level - 1].get("cooldown")
-        self.damage = TURRET_DATA[self.upgrade_level - 1].get("damage")
+        self.range = RED_TURRET[self.upgrade_level - 1].get("range")
+        self.cooldown = RED_TURRET[self.upgrade_level - 1].get("cooldown")
+        self.damage = RED_TURRET[self.upgrade_level - 1].get("damage")
         self.last_shot = pg.time.get_ticks()
         self.selected = False
         self.target = None
@@ -98,9 +98,9 @@ class Turret(pg.sprite.Sprite):
                 
     def upgrade(self):
         self.upgrade_level += 1
-        self.range = TURRET_DATA[self.upgrade_level - 1].get("range")
-        self.cooldown = TURRET_DATA[self.upgrade_level - 1].get("cooldown")
-        self.damage = TURRET_DATA[self.upgrade_level - 1].get("damage")
+        self.range = RED_TURRET[self.upgrade_level - 1].get("range")
+        self.cooldown = RED_TURRET[self.upgrade_level - 1].get("cooldown")
+        self.damage = RED_TURRET[self.upgrade_level - 1].get("damage")
         #upgrade turret image
         self.animation_list = self.load_images(self.sprite_sheets[self.upgrade_level - 1])
         self.original_image = self.animation_list[self.frame_index]
