@@ -31,19 +31,26 @@ frame = 0
 Blue_Cyan = (0, 120, 120)
 BLACK = (0, 0, 0)
 setting_status = False
+shop_status = False
+inventory_status = False
 
 #load images
 #map
 map_image = pg.image.load('levels/map.png').convert_alpha()
+
+canon_spritesheets = []
+sniper_spritesheets = []
+machineGun_spritesheets = []
+for x in range(1, constants.TURRET_LEVELS + 1):
 #canon spritesheets
-turret_spritesheets = []
-for x in range(1, constants.TURRET_LEVELS + 1):
     red_turret_sheet = pg.image.load(f'assets/images/turrets/red_turret_{x}.png').convert_alpha()
-    turret_spritesheets.append(red_turret_sheet)
+    canon_spritesheets.append(red_turret_sheet)
 #sniper_spritesheets
-for x in range(1, constants.TURRET_LEVELS + 1):
     purple_turret_sheet = pg.image.load(f'assets/images/turrets/purple_turret_{x}.png').convert_alpha()
-    turret_spritesheets.append(purple_turret_sheet)
+    sniper_spritesheets.append(purple_turret_sheet)
+#machine gun spritesheets
+    blue_turret_sheet = pg.image.load(f'assets/images/turrets/blue_turret_{x}.png').convert_alpha()
+    machineGun_spritesheets.append(blue_turret_sheet)
 
 #coin spritesheets
 coin_sheet = pg.image.load('assets/images/coins/coin1.png').convert_alpha()
@@ -64,8 +71,10 @@ enemy_images = {
 enemy_image = pg.image.load('assets/images/enemies/zombie.png').convert_alpha()
 #buttons
 start_image = pg.image.load('assets/images/buttons/start.png').convert_alpha()
+shop_image = pg.image.load('assets/images/buttons/shop.png').convert_alpha()
 buy_RedTurret_image = pg.image.load('assets/images/turrets/buy_red_turret.png').convert_alpha()
 buy_PurpleTurret_image = pg.image.load('assets/images/turrets/buy_Purple_turret.png').convert_alpha()
+buy_BlueTurret_image = pg.image.load('assets/images/turrets/buy_Blue_turret.png').convert_alpha()
 cancel_image = pg.image.load('assets/images/buttons/cancel.png').convert_alpha()
 upgrade_turret_image = pg.image.load('assets/images/buttons/upgrade_turret.png').convert_alpha()
 begin_image = pg.image.load('assets/images/buttons/begin.png').convert_alpha()
@@ -82,7 +91,7 @@ logo_image = pg.image.load('assets/images/gui/logo.png').convert_alpha()
 
 #background music 
 Background_music = pg.mixer.Sound ('assets/audio/background_music.mp3')
-Background_music.set_volume(0.05)
+Background_music.set_volume(0)
 
 #load sounds
 shot_fx = pg.mixer.Sound ('assets/audio/shot.wav')
@@ -127,11 +136,20 @@ def create_turret(mouse_pos):
                 space_is_free = False
         #if it is a free space then create turret
         if space_is_free == True:
-            new_turret = Turret(turret_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx)
-            turret_group.add(new_turret)
-            #dedust cost of turret
-            world.money -= constants.BUY_COST
-            print(turret_spritesheets)
+                new_turret = Turret(canon_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx)
+                turret_group.add(new_turret)
+                #dedust cost of turret
+                world.money -= constants.BUY_COST
+                print(canon_spritesheets)
+            #if Purple turret button place purple turret
+                new_turret = Turret(sniper_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx)
+                turret_group.add(new_turret)
+                print(sniper_spritesheets)
+            #if Blue turret button place purple turret
+        if Blue_turret_button.draw(screen):
+                new_turret = Turret(machineGun_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx)
+                turret_group.add(new_turret)
+                print(machineGun_spritesheets)
             
 def select_turret(mouse_pos):
     mouse_tile_x = mouse_pos[0] // constants.TILE_SIZE
@@ -155,13 +173,15 @@ turret_group = pg.sprite.Group()
 
 #create buttons
 start_button = Button(840, 415, start_image, True)
+shop_button = Button(200, 500, shop_image, True)
 Red_turret_button = Button(constants.SCREEN_WIDTH + 30, 120, buy_RedTurret_image, True)
 Purple_turret_button = Button(constants.SCREEN_WIDTH + 30, 240, buy_PurpleTurret_image, True)
-cancel_button = Button(constants.SCREEN_WIDTH + 50, 180, cancel_image, True)
+Blue_turret_button = Button(constants.SCREEN_WIDTH + 30, 360, buy_BlueTurret_image, True)
+cancel_button = Button(constants.SCREEN_WIDTH + 100, 160, cancel_image, True)
 upgrade_button = Button(constants.SCREEN_WIDTH + 5, 180, upgrade_turret_image, True)
 begin_button = Button(constants.SCREEN_WIDTH + 80, 650, begin_image, True)
 restart_button = Button(310, 300, restart_image, True)
-fast_forward_button = Button(constants.SCREEN_WIDTH + 50, 300, fast_forward_image, False)
+fast_forward_button = Button(constants.SCREEN_WIDTH + 50, 500, fast_forward_image, False)
 setting_button = Button(constants.SCREEN_WIDTH + 240, 10, setting_image, True)
 close_button = Button(1820, 25, close_app_image, True)
 close_menu_button = Button(1170, 330, close_menu_image, True)
@@ -275,12 +295,14 @@ while run:
             #draw buttons
             #button for placing turrets
             #for the "turret button" show cost of turret and draw the button
-            draw_text(str(constants.BUY_COST), text_font, "grey100", constants.SCREEN_WIDTH + 215, 135)
-            screen.blit(coin_spritesheets[frame], (constants.SCREEN_WIDTH + 260, 130))
+            draw_text(str(constants.BUY_COST), text_font, "grey100", constants.SCREEN_WIDTH + 200, 130)
+            screen.blit(coin_spritesheets[frame], (constants.SCREEN_WIDTH + 150, 125))
             if Red_turret_button.draw(screen):
                 placing_turrets = True
                 
             if Purple_turret_button.draw(screen):
+                placing_turrets = True
+            if Blue_turret_button.draw(screen):
                 placing_turrets = True
                 #if placing turrets then show the cancel button as well
             if placing_turrets == True:
