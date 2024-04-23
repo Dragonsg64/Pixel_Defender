@@ -30,6 +30,7 @@ selected_turret = None
 frame = 0
 Blue_Cyan = (0, 120, 120)
 BLACK = (0, 0, 0)
+main_menu_status = True
 setting_status = False
 shop_status = False
 inventory_status = False
@@ -72,6 +73,7 @@ enemy_image = pg.image.load('assets/images/enemies/zombie.png').convert_alpha()
 #buttons
 start_image = pg.image.load('assets/images/buttons/start.png').convert_alpha()
 shop_image = pg.image.load('assets/images/buttons/shop.png').convert_alpha()
+inventory_image = pg.image.load('assets/images/buttons/inventory.png').convert_alpha()
 buy_RedTurret_image = pg.image.load('assets/images/turrets/buy_red_turret.png').convert_alpha()
 buy_PurpleTurret_image = pg.image.load('assets/images/turrets/buy_Purple_turret.png').convert_alpha()
 buy_BlueTurret_image = pg.image.load('assets/images/turrets/buy_Blue_turret.png').convert_alpha()
@@ -102,6 +104,7 @@ with open('levels/map.tmj') as file:
     world_data = json.load(file)
 
 #load fonts for displaying text on the screen
+Title_interface = pg.font.Font('assets/fonts/minecraft.ttf', 60)
 text_font = pg.font.SysFont("Consolas", 24, bold = True)
 large_font = pg.font.SysFont("Consolas", 36)
 
@@ -173,7 +176,8 @@ turret_group = pg.sprite.Group()
 
 #create buttons
 start_button = Button(840, 415, start_image, True)
-shop_button = Button(200, 500, shop_image, True)
+shop_button = Button(70, 350, shop_image, True)
+inventory_button = Button(70, 500, inventory_image, True)
 Red_turret_button = Button(constants.SCREEN_WIDTH + 30, 120, buy_RedTurret_image, True)
 Purple_turret_button = Button(constants.SCREEN_WIDTH + 30, 240, buy_PurpleTurret_image, True)
 Blue_turret_button = Button(constants.SCREEN_WIDTH + 30, 360, buy_BlueTurret_image, True)
@@ -191,33 +195,60 @@ leave_button = Button(875, 600, leave_image, True)
 run = True
 while run:
     
-    if game_start == False:
-        screen.fill(Blue_Cyan)
-        
-        #button start the game and play the background music
-        if start_button.draw(screen):
-            game_start = True
-            Background_music.play()
-        
-            #event handler
-        for event in pg.event.get():
-            #setting program
+    #event handler
+    for event in pg.event.get():
+        #setting program
 
-            #quit program
-            if event.type == pg.QUIT:
-                run = False
-            #mouse click
-            if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
-                mouse_pos = pg.mouse.get_pos()
-                
-        if close_button.draw(screen):
-            exit()
-        
+        #quit program
+        if event.type == pg.QUIT:
+            run = False
+        #mouse click
+        if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+            mouse_pos = pg.mouse.get_pos()
+    
+    if not game_start:
+        if main_menu_status:
+            screen.fill(Blue_Cyan)
+            if close_button.draw(screen):
+                exit()
+            #button start the game and play the background music
+            if start_button.draw(screen):
+                game_start = True
+                Background_music.play()
+            #button open the shop
+            if shop_button.draw(screen):
+                main_menu_status = False
+                shop_status = True
+            #button open the inventory
+            if inventory_button.draw(screen):
+                main_menu_status = False
+                inventory_status = True
+            
+        else:
+            #shop panel
+            if shop_status:
+                pg.draw.rect(screen, Blue_Cyan, (0, 0, 1920, 1080))
+                draw_text("SHOP", Title_interface, "black", 900, 150)
+                if inventory_button.draw(screen):
+                    shop_status = False
+                    inventory_status = True
+                if close_menu_button.draw(screen):
+                    main_menu_status = True
+                    shop_status = False
+                    
+            #inventory panel
+            if inventory_status:
+                pg.draw.rect(screen, Blue_Cyan, (0, 0, 1920, 1080))
+                draw_text("INVENTORY", Title_interface, "black", 850, 150)
+                if shop_button.draw(screen):
+                    shop_status = True
+                    inventory_status = False
+                if close_menu_button.draw(screen):
+                    main_menu_status = True
+                    inventory_status = False
         
     else:
         clock.tick(constants.FPS)
-        
-        
         
         ###############################
         #  UPDATING SECTION
@@ -297,9 +328,9 @@ while run:
             #for the "turret button" show cost of turret and draw the button
             draw_text(str(constants.BUY_COST), text_font, "grey100", constants.SCREEN_WIDTH + 200, 130)
             screen.blit(coin_spritesheets[frame], (constants.SCREEN_WIDTH + 150, 125))
+            #
             if Red_turret_button.draw(screen):
                 placing_turrets = True
-                
             if Purple_turret_button.draw(screen):
                 placing_turrets = True
             if Blue_turret_button.draw(screen):
@@ -326,10 +357,10 @@ while run:
                         if world.money >= constants.UPGRADE_COST:
                             selected_turret.upgrade()
                             world.money -= constants.UPGRADE_COST
-                            
+            
             #setting panel
             if setting_button.draw(screen):
-                    setting_status = True
+                setting_status = True
             if setting_status:
                 pg.draw.rect(screen, "grey50", (650, 300, 600, 400), border_radius = 30)
                 draw_text("SETTING", large_font, "black", 875, 330)
