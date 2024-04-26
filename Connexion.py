@@ -1,0 +1,236 @@
+from DataManager import DataManager
+from tkinter import *
+from tkinter import messagebox
+import customtkinter as ctk
+import hashlib
+import re
+from os import path
+from tkinter import BooleanVar
+import bcrypt
+
+
+
+# Initialize database connection
+dataManager = DataManager('localhost', 'root', '', 'tower_defence')
+dataManager.Connect()
+cursor = dataManager.connection.cursor()
+
+# Set Tkinter appearance
+def apply_theme():
+     ctk.set_appearance_mode("dark")
+     ctk.set_default_color_theme("dark-blue")
+
+def register_user(nickname, password, verify_password, register_window):
+    try:
+        #Check if password meets requirments
+        if not (re.search("[a-z]", password) and re.search("[A-Z]", password) and re.search("[!@#$%^&*(),.?\":{}|<>]", password) and len(password) >= 8):
+            messagebox.showerror("Error", "Le mot de passe doit contenir au moins 1 majuscule, 1 minuscule, 1 caractère spécial et doit avoir une longueur d'au moins 10 caractères.")
+            return
+        
+        # Check si mot de passe correspond
+        if password != verify_password:
+            messagebox.showerror("Error", "Les mot de passe ne correspond pas.")
+            return        
+        
+        bytes = password.encode('utf-8') 
+        #généré le sel pour bcrypt
+        salt = bcrypt.gensalt()
+        # Hash the password
+        hashed_password = bcrypt.hashpw(bytes, salt)
+        
+        # Insert user into the database
+        insert_query = "INSERT INTO player (nickname, password) VALUES (%s, %s)"
+        data = (nickname, hashed_password)
+        cursor.execute(insert_query, data)
+        dataManager.connection.commit()
+        messagebox.showinfo("Success", "Registration Successful!")
+        
+        # Close the registration window
+        register_window.destroy()
+    except Exception as e:
+        messagebox.showerror("Error", f"Registration Failed: {str(e)}")
+
+
+def register_window():
+
+    def toggle_password_visibility():
+        if show_password.get():
+            # Show password
+            champVerifyMdp.configure(show="")
+            champMdp.configure(show="")
+        else:
+            # Hide password
+            champVerifyMdp.configure(show="*")
+            champMdp.configure(show="*")
+
+
+    register_window = Toplevel()
+    register_window.geometry("600x400")
+    register_window.title("tower_defence Inscription")
+    #apply_theme(register_window)
+
+    frame = ctk.CTkFrame(master=register_window)
+    frame.pack(pady=20, padx=60, fill="both", expand=True)
+
+    label = ctk.CTkLabel(master=frame, text="S'inscrire")
+    label.pack(pady=12, padx=10)
+
+    champnickname = ctk.CTkEntry(master=frame, placeholder_text="Nom d'utilisateur")
+    champnickname.pack(pady=12)
+
+    champMdp = ctk.CTkEntry(master=frame, placeholder_text="Mot de passe", show="*")
+    champMdp.pack(pady=12)
+
+    champVerifyMdp = ctk.CTkEntry(master=frame, placeholder_text="Vérifier le mot de passe", show="*")
+    champVerifyMdp.pack(pady=12)
+
+    show_password = BooleanVar()
+    show_checkbox = ctk.CTkCheckBox(master=frame, text="Afficher le mot de passe", variable=show_password, command=toggle_password_visibility )
+    show_checkbox.pack(pady=12, padx=10)
+
+
+    ButtonInscrip = ctk.CTkButton(master=frame, text="Inscription", command=lambda: register_user(champnickname.get(), champMdp.get(), champVerifyMdp.get(), register_window))
+    ButtonInscrip.pack(pady=12, padx=10)
+
+    annulerInsc = ctk.CTkButton(master=frame, text="Annuler", command=register_window.destroy)
+    annulerInsc.pack(pady=12, padx=10)
+
+
+def login():
+    nickname = champ1.get()
+    userPassword = champ2.get()
+
+    try:
+        
+        # Check si l'utilisateur exite
+        query = "SELECT * FROM player WHERE nickname = \"" + nickname + "\";"
+        cursor.execute(query)
+        user_result = cursor.fetchall()
+        result = bcrypt.checkpw(userPassword.encode('utf-8'), user_result[0][2].encode('utf-8'))
+        
+        if result:
+            messagebox.showinfo("Success", "Login Successful!")
+               
+            home_page(nickname)  # Ouvrir la page d'accueil
+            main_window.withdraw() # Cacher la fenêtre de connexion
+        else:
+            messagebox.showerror("Error", "Invalid nickname or password!")
+    except Exception as e:
+        messagebox.showerror("Error", f"Login Failed: {str(e)}")
+
+def show_password():
+    if checkbox_var.get():
+        champ2.configure(show="")
+    else:
+        champ2.configure(show="*")
+
+
+# Create main login window
+main_window = ctk.CTk()
+main_window.geometry("600x400")
+main_window.title("tower_defence Connexion")
+#apply_theme(main_window)
+
+def home_page(nickname):
+    def modify_user():
+        def update_user():
+            new_nickname = new_nickname_entry.get()
+            new_password = new_password_entry.get()
+
+            try:
+                # Check if password meets requirements
+                if not (re.search("[a-z]", new_password) and re.search("[A-Z]", new_password) and re.search("[!@#$%^&*(),.?\":{}|<>]", new_password) and len(new_password) >= 8):
+                    messagebox.showerror("Error", "Le mot de passe doit contenir au moins 1 majuscule, 1 minuscule, 1 caractère spécial et doit avoir une longueur d'au moins 8 caractères.")
+                    return
+
+                # Hash the password
+                hashed_password = hashlib.sha256(new_password.encode()).hexdigest()
+
+                # Update user information in the database
+                update_query = "UPDATE tower_defence SET nickname = %s, password = %s WHERE nickname = %s"
+                data = (new_nickname, hashed_password, nickname)
+                cursor.execute(update_query, data)
+                dataManager.connection.commit()
+
+                messagebox.showinfo("Success", "User information updated successfully!")
+                modify_window.destroy()
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to update user information: {str(e)}")
+
+        modify_window = Toplevel()
+        modify_window.geometry("400x300")
+        modify_window.title("Modifier l'utilisateur")
+
+        # Labels and Entries for username and password
+        nickname_label = ctk.CTkLabel(master=modify_window, text="Nouveau nom d'utilisateur:")
+        nickname_label.pack(pady=10)
+        new_nickname_entry = ctk.CTkEntry(master=modify_window)
+        new_nickname_entry.pack(pady=5)
+
+        password_label = ctk.CTkLabel(master=modify_window, text="Nouveau mot de passe:")
+        password_label.pack(pady=10)
+        new_password_entry = ctk.CTkEntry(master=modify_window, show="*")
+        new_password_entry.pack(pady=5)
+
+        # Button to trigger the update_user function
+        update_button = ctk.CTkButton(master=modify_window, text="Modifier", command=update_user)
+        update_button.pack(pady=20)
+
+    def quit_app():
+        home_window.withdraw() # Fermer la fenêtre d'accueil
+
+    # Créer une nouvelle fenêtre pour la page d'accueil
+    home_window = Toplevel()
+    home_window.geometry("600x400")
+    home_window.title("tower_defence Accueil")
+
+    
+    frame = ctk.CTkFrame(master=home_window)
+    frame.pack(pady=20, padx=60, fill="both", expand=True)
+    # Ajouter du contenu à la page d'accueil
+    label = ctk.CTkLabel(master=frame, text=f"Bienvenue sur Sirtoez&Melangez, {nickname}!")
+    label.pack(pady=20)
+
+    # Créer le menu
+    menu = Menu(home_window)
+    home_window.config(menu=menu)
+
+    # Menu Utilisateur
+    user_menu = Menu(menu, tearoff=0)
+    menu.add_cascade(label="Utilisateur", menu=user_menu)
+    user_menu.add_command(label="Modifier l'utilisateur", command=modify_user)
+    user_menu.add_separator()
+    user_menu.add_command(label="Quitter", command=quit_app)
+
+    # Fermer la fenêtre de connexion
+    main_window.withdraw()
+
+
+
+#Créer la variable de contrôle pour la case à cocher après la création de la fenêtre principal
+checkbox_var = BooleanVar()
+#Appeler la fonction pour vérifier si des informations de connexion sont enregistrées
+frame = ctk.CTkFrame(master=main_window)
+frame.pack(pady=20, padx=60, fill="both", expand=True)
+
+label = ctk.CTkLabel(master=frame, text="Se connecter")
+label.pack(pady=12, padx=10)
+
+champ1 = ctk.CTkEntry(master=frame, placeholder_text="Identifiant")
+champ1.pack(pady=12)
+nickname = champ1.get()
+
+champ2 = ctk.CTkEntry(master=frame, placeholder_text="Mot de passe", show="*")
+champ2.pack(pady=12)
+
+checkbox = ctk.CTkCheckBox(master=frame, text="Afficher le mot de passe", variable=checkbox_var, command=show_password)
+checkbox.pack(pady=12, padx=10)
+
+button = ctk.CTkButton(master=frame, text="Connexion", command=login)
+button.pack(pady=12, padx=10)
+
+
+button2 = ctk.CTkButton(master=frame, text="Vous n'êtes pas inscrit, inscrivez-vous ICI ", command=register_window)
+button2.pack(pady=12, padx=10)
+
+main_window.mainloop()

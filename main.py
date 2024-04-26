@@ -83,7 +83,8 @@ begin_image = pg.image.load('assets/images/buttons/begin.png').convert_alpha()
 restart_image = pg.image.load('assets/images/buttons/restart.png').convert_alpha()
 fast_forward_image = pg.image.load('assets/images/buttons/fast_forward.png').convert_alpha()
 setting_image = pg.image.load('assets/images/buttons/setting.png').convert_alpha()
-close_menu_image = pg.image.load('assets/images/buttons/close_menu.png').convert_alpha()
+close_interface_image = pg.image.load('assets/images/buttons/close_interface.png').convert_alpha()
+close_setting_image = pg.image.load('assets/images/buttons/close_setting.png').convert_alpha()
 close_app_image = pg.image.load('assets/images/buttons/close_app.png').convert_alpha()
 leave_image = pg.image.load('assets/images/buttons/leave.png').convert_alpha()
 
@@ -145,6 +146,7 @@ def create_turret(mouse_pos):
                 world.money -= constants.BUY_COST
                 print(canon_spritesheets)
             #if Purple turret button place purple turret
+        if Purple_turret_button.draw(screen):
                 new_turret = Turret(sniper_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx)
                 turret_group.add(new_turret)
                 print(sniper_spritesheets)
@@ -188,7 +190,8 @@ restart_button = Button(310, 300, restart_image, True)
 fast_forward_button = Button(constants.SCREEN_WIDTH + 50, 500, fast_forward_image, False)
 setting_button = Button(constants.SCREEN_WIDTH + 240, 10, setting_image, True)
 close_button = Button(1820, 25, close_app_image, True)
-close_menu_button = Button(1170, 330, close_menu_image, True)
+close_interface_button = Button(1700, 140, close_interface_image, True)
+close_setting_button = Button(1170, 330, close_setting_image, True)
 leave_button = Button(875, 600, leave_image, True)
 
 #game loop
@@ -232,7 +235,7 @@ while run:
                 if inventory_button.draw(screen):
                     shop_status = False
                     inventory_status = True
-                if close_menu_button.draw(screen):
+                if close_interface_button.draw(screen):
                     main_menu_status = True
                     shop_status = False
                     
@@ -243,7 +246,7 @@ while run:
                 if shop_button.draw(screen):
                     shop_status = True
                     inventory_status = False
-                if close_menu_button.draw(screen):
+                if close_interface_button.draw(screen):
                     main_menu_status = True
                     inventory_status = False
         
@@ -365,7 +368,7 @@ while run:
                 pg.draw.rect(screen, "grey50", (650, 300, 600, 400), border_radius = 30)
                 draw_text("SETTING", large_font, "black", 875, 330)
                 #closing button
-                if close_menu_button.draw(screen):
+                if close_setting_button.draw(screen):
                     setting_status = False
                 if leave_button.draw(screen):
                     game_start = False
