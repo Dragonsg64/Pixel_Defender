@@ -1,19 +1,26 @@
-from DataManager import DataManager
 from tkinter import *
 from tkinter import messagebox
 import customtkinter as ctk
 import hashlib
+import sqlite3
 import re
 from os import path
 from tkinter import BooleanVar
 import bcrypt
 
-
+                #hash_object = hashlib.sha3_512(password.encode())
+				#hex_digest = hash_object.hexdigest()
+				# Connect to the database
+				#sqliteConnection = sqlite3.connect('../DataBase/connect.db')
+				#cursor = sqliteConnection.cursor()
+				# Check if the provided credentials exist in the database
+				#query = '''Select * From Id WHERE Pseudo=? AND Password=?;'''
+				#cursor.execute(query,(id, hex_digest))
+				#output = cursor.fetchall()
 
 # Initialize database connection
-dataManager = DataManager('localhost', 'root', '', 'tower_defence')
-dataManager.Connect()
-cursor = dataManager.connection.cursor()
+dataManager = sqlite3.connect('DTB/Tower_Defense.db')
+cursor = dataManager.cursor()
 
 # Set Tkinter appearance
 def apply_theme():
@@ -32,17 +39,13 @@ def register_user(nickname, password, verify_password, register_window):
             messagebox.showerror("Error", "Les mot de passe ne correspond pas.")
             return        
         
-        bytes = password.encode('utf-8') 
-        #généré le sel pour bcrypt
-        salt = bcrypt.gensalt()
-        # Hash the password
-        hashed_password = bcrypt.hashpw(bytes, salt)
+        hash_object = hashlib.sha3_512(password.encode())
+        hashed_password = hash_object.hexdigest()
         
         # Insert user into the database
-        insert_query = "INSERT INTO player (nickname, password) VALUES (%s, %s)"
-        data = (nickname, hashed_password)
-        cursor.execute(insert_query, data)
-        dataManager.connection.commit()
+        insert_query = "INSERT INTO player (nickname, password) VALUES (?, ?);"
+        cursor.execute(insert_query, (nickname, hashed_password))
+        dataManager.commit()
         messagebox.showinfo("Success", "Registration Successful!")
         
         # Close the registration window
@@ -101,12 +104,12 @@ def login():
     userPassword = champ2.get()
 
     try:
-        
+        hash_object = hashlib.sha3_512(userPassword.encode())
+        userPassword = hash_object.hexdigest()
         # Check si l'utilisateur exite
-        query = "SELECT * FROM player WHERE nickname = \"" + nickname + "\";"
-        cursor.execute(query)
-        user_result = cursor.fetchall()
-        result = bcrypt.checkpw(userPassword.encode('utf-8'), user_result[0][2].encode('utf-8'))
+        query = "SELECT * FROM player WHERE nickname=? AND password=?;"
+        cursor.execute(query,(nickname,userPassword))
+        result = cursor.fetchall()
         
         if result:
             messagebox.showinfo("Success", "Login Successful!")
@@ -144,7 +147,8 @@ def home_page(nickname):
                     return
 
                 # Hash the password
-                hashed_password = hashlib.sha256(new_password.encode()).hexdigest()
+                hash_object = hashlib.sha3_512(new_password.encode())
+                hashed_password = hash_object.hexdigest()
 
                 # Update user information in the database
                 update_query = "UPDATE tower_defence SET nickname = %s, password = %s WHERE nickname = %s"
