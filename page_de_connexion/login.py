@@ -6,6 +6,7 @@ import sqlite3
 import re
 from os import path
 from tkinter import BooleanVar
+from subprocess import Popen
 
                 #hash_object = hashlib.sha3_512(password.encode())
 				#hex_digest = hash_object.hexdigest()
@@ -193,6 +194,19 @@ def home_page(nickname):
     # Ajouter du contenu à la page d'accueil
     label = ctk.CTkLabel(master=frame, text=f"Bienvenue sur Pixel Defender, {nickname}!")
     label.pack(pady=20)
+
+    # Ajouter une image qui permet d'accèder au jeu
+    Start_button_image = PhotoImage(file="assets/images/gui/logo.png")
+    
+    def start_game():
+        #specifier le chemin du jeu
+        launch_game = "jeu/main.py"
+
+        #utilise subprocess pour démarrer l'auter fichier python
+        Popen(["python", launch_game])
+    
+    button_start = ctk.CTkButton(master=frame, text="", command=start_game, image=Start_button_image)
+    button_start.pack(pady=12, padx=10)
 
     # Créer le menu
     menu = Menu(home_window)

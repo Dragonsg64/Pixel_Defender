@@ -7,17 +7,17 @@ TURRET = {
         },
         {
             "range": 140,
-            "cooldown": 1000,
+            "cooldown": 1250,
             "damage": 4,
         },
         {
             "range": 155,
-            "cooldown": 800,
+            "cooldown": 1000,
             "damage": 8,
         },
         {
             "range": 180,
-            "cooldown": 350,
+            "cooldown": 750,
             "damage": 10,
         }
     ],
