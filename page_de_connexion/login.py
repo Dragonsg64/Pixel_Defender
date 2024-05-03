@@ -6,7 +6,6 @@ import sqlite3
 import re
 from os import path
 from tkinter import BooleanVar
-import bcrypt
 
                 #hash_object = hashlib.sha3_512(password.encode())
 				#hex_digest = hash_object.hexdigest()
@@ -19,7 +18,7 @@ import bcrypt
 				#output = cursor.fetchall()
 
 # Initialize database connection
-dataManager = sqlite3.connect('DTB/Tower_Defense.db')
+dataManager = sqlite3.connect('./DTB/Tower_Defense.db')
 cursor = dataManager.cursor()
 
 # Set Tkinter appearance
@@ -69,7 +68,7 @@ def register_window():
 
     register_window = Toplevel()
     register_window.geometry("600x400")
-    register_window.title("tower_defence Inscription")
+    register_window.title("Pixel Defender Inscription")
     #apply_theme(register_window)
 
     frame = ctk.CTkFrame(master=register_window)
@@ -131,7 +130,7 @@ def show_password():
 # Create main login window
 main_window = ctk.CTk()
 main_window.geometry("600x400")
-main_window.title("tower_defence Connexion")
+main_window.title("Pixel Defender Connexion")
 #apply_theme(main_window)
 
 def home_page(nickname):
@@ -186,13 +185,13 @@ def home_page(nickname):
     # Créer une nouvelle fenêtre pour la page d'accueil
     home_window = Toplevel()
     home_window.geometry("600x400")
-    home_window.title("tower_defence Accueil")
+    home_window.title("Pixel Defender Accueil")
 
     
     frame = ctk.CTkFrame(master=home_window)
     frame.pack(pady=20, padx=60, fill="both", expand=True)
     # Ajouter du contenu à la page d'accueil
-    label = ctk.CTkLabel(master=frame, text=f"Bienvenue sur Sirtoez&Melangez, {nickname}!")
+    label = ctk.CTkLabel(master=frame, text=f"Bienvenue sur Pixel Defender, {nickname}!")
     label.pack(pady=20)
 
     # Créer le menu

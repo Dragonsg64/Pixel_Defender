@@ -15,7 +15,7 @@ clock = pg.time.Clock()
 
 #create game window
 screen = pg.display.set_mode((constants.SCREEN_WIDTH + constants.SIDE_PANEL, constants.SCREEN_HEIGHT), pg.FULLSCREEN)
-pg.display.set_caption("tower defence")
+pg.display.set_caption("Pixel Defender")
 
 
 #game variables
@@ -126,7 +126,7 @@ def display_data():
     screen.blit(coin_spritesheets[frame],(constants.SCREEN_WIDTH + 10, 65))
     draw_text(str(world.money), text_font, "grey100", constants.SCREEN_WIDTH + 50, 70)
 
-def create_turret(mouse_pos):
+def create_turret(mouse_pos, turret_type):
     mouse_tile_x = mouse_pos[0] // constants.TILE_SIZE
     mouse_tile_y = mouse_pos[1] // constants.TILE_SIZE
     #calculate the sequential number of the tile
@@ -139,22 +139,16 @@ def create_turret(mouse_pos):
             if (mouse_tile_x, mouse_tile_y) == (turret.tile_x, turret.tile_y):
                 space_is_free = False
         #if it is a free space then create turret
-        if space_is_free == True:
-                new_turret = Turret(canon_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx)
-                turret_group.add(new_turret)
-                #dedust cost of turret
-                world.money -= constants.BUY_COST
-                print(canon_spritesheets)
-            #if Purple turret button place purple turret
-        if Purple_turret_button.draw(screen):
-                new_turret = Turret(sniper_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx)
-                turret_group.add(new_turret)
-                print(sniper_spritesheets)
-            #if Blue turret button place purple turret
-        if Blue_turret_button.draw(screen):
-                new_turret = Turret(machineGun_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx)
-                turret_group.add(new_turret)
-                print(machineGun_spritesheets)
+        if space_is_free:
+            if turret_type == "CANON":
+                new_turret = Turret(canon_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, "CANON")
+            elif turret_type == "SNIPER":
+                new_turret = Turret(sniper_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, "SNIPER")
+            elif turret_type == "MACHINE_GUN":
+                new_turret = Turret(machineGun_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, "MACHINE_GUN")
+            turret_group.add(new_turret)
+            #deduct cost of turret
+            world.money -= constants.BUY_COST
             
 def select_turret(mouse_pos):
     mouse_tile_x = mouse_pos[0] // constants.TILE_SIZE
@@ -334,10 +328,13 @@ while run:
             #
             if Red_turret_button.draw(screen):
                 placing_turrets = True
+                create_turret(pg.mouse.get_pos(), "CANON")
             if Purple_turret_button.draw(screen):
                 placing_turrets = True
+                create_turret(pg.mouse.get_pos(), "SNIPER")
             if Blue_turret_button.draw(screen):
                 placing_turrets = True
+                create_turret(pg.mouse.get_pos(), "MACHINE_GUN")
                 #if placing turrets then show the cancel button as well
             if placing_turrets == True:
                 #show cursor turret
