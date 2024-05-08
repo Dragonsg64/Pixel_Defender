@@ -1,7 +1,7 @@
 import pygame as pg
 import math
 import constants
-from turret_data import TURRET
+from turret_stat import TURRET
 
 class Turret(pg.sprite.Sprite):
     def __init__(self, sprite_sheets, tile_x, tile_y, shot_fx, turret_type):
@@ -98,9 +98,9 @@ class Turret(pg.sprite.Sprite):
                 self.last_shot = pg.time.get_ticks()
                 self.target = None
                 
-    def upgrade(self):
+    def upgrade(self,turret_type):
         self.upgrade_level += 1
-        turret_data = TURRET[self.selected_turret_type["CANNON"]][self.upgrade_level - 1]
+        turret_data = TURRET[turret_type][self.upgrade_level - 1]
         self.range = turret_data["range"]
         self.cooldown = turret_data["cooldown"]
         self.damage = turret_data["damage"]

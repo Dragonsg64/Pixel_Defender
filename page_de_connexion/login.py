@@ -19,7 +19,7 @@ from subprocess import Popen
 				#output = cursor.fetchall()
 
 # Initialize database connection
-dataManager = sqlite3.connect('./DTB/Tower_Defense.db')
+dataManager = sqlite3.connect('./DTB/Pixel_Defender.db')
 cursor = dataManager.cursor()
 
 # Set Tkinter appearance

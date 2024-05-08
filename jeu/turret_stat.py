@@ -1,3 +1,17 @@
+# import sqlite3
+
+# conn = sqlite3.connect("DTB/Pixel_Defender.db")
+# cur = conn.cursor()
+
+# cur.execute("SELECT * FROM tower_level")
+
+# turret_data = cur.fetchall()  # Récupérer toutes les lignes de résultats
+
+# print(turret_data)
+# # Fermer la connexion à la base de données
+# cur.close()
+# conn.close()
+
 TURRET = {
     "CANNON" : [
         {
