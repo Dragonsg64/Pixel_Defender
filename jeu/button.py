@@ -9,6 +9,11 @@ class Button():
         self.single_click = single_click
         
     def draw(self, surface):
+        #draw button on screen
+        surface.blit(self.image, self.rect)
+        
+        
+    def click(self):
         action = False
         #get mouse position
         pos = pg.mouse.get_pos()
@@ -23,8 +28,5 @@ class Button():
                 
         if pg.mouse.get_pressed()[0] == 0:
             self.clicked = False
-        
-        #draw button on screen
-        surface.blit(self.image, self.rect)
-        
+            
         return action

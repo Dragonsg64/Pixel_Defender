@@ -26,9 +26,19 @@ python -c "import tkinter" >nul 2>&1
 if %errorlevel% neq 0 (
     echo tkinter n'est pas installé. Installation en cours...
     REM Installer tkinter
-    python -m pip install tkinter
+    python -m pip install tk
 ) else (
     echo tkinter est bien installer
+)
+
+rem Vérifier si customtkinter est installé
+python -c "import customtkinter" >nul 2>&1
+if %errorlevel% neq 0 (
+    echo customtkinter n'est pas installé. Installation en cours...
+    REM Installer tkinter
+    python -m pip install customtkinter
+) else (
+    echo customtkinter est bien installer
 )
 
 rem Lancer votre jeu

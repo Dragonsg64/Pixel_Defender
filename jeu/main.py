@@ -63,8 +63,10 @@ coin_spritesheets = []
 for x in range(constants.COIN_ANIMATION):
     coin_spritesheets.append(sprite_sheet.get_image(x, 33, 32, 1, BLACK))
 
-#individual turret image for mouse cursor
-cursor_turret = pg.image.load('assets/images/turrets/red_cursor_turret.png').convert_alpha()
+#turret image for mouse cursor
+red_cursor_turret = pg.image.load('assets/images/turrets/red_cursor_turret.png').convert_alpha()
+purple_cursor_turret = pg.image.load('assets/images/turrets/purple_cursor_turret.png').convert_alpha()
+blue_cursor_turret = pg.image.load('assets/images/turrets/blue_cursor_turret.png').convert_alpha()
 #enemies
 enemy_images = {
     "weak": pg.image.load('assets/images/enemies/zombie.png').convert_alpha(),
@@ -148,17 +150,20 @@ def create_turret(mouse_pos, turret_type):
                 space_is_free = False      
         if space_is_free == True:
             # Utilisez le sprite_sheet approprié en fonction du type de tourelle sélectionné
-                if Red_turret_button.draw(screen):
+            
+                if Red_turret_button.click():
                     turret_type = "CANNON"
                     new_turret = Turret(canon_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, turret_type="CANNON")
                     turret_group.add(new_turret)
                     print(Red_turret_button)
-                elif Purple_turret_button.draw(screen):
+                elif Purple_turret_button.click():
                     turret_type = "SNIPER"
+                    
+                    
                     new_turret = Turret(sniper_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, turret_type="SNIPER")
                     turret_group.add(new_turret)
                     print(Purple_turret_button)
-                elif Blue_turret_button.draw(screen):
+                elif Blue_turret_button.click():
                     turret_type = "MACHINEGUN"
                     new_turret = Turret(machineGun_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, turret_type="MACHINE_GUN")
                     turret_group.add(new_turret)
@@ -220,19 +225,26 @@ while run:
     
     if not game_start:
         if main_menu_status:
+            #draw all button on screen
             screen.fill(Blue_Cyan)
-            if close_button.draw(screen):
+            close_button.draw(screen)
+            start_button.draw(screen)
+            shop_button.draw(screen)
+            inventory_button.draw(screen)
+            
+            #button close the game
+            if close_button.click():
                 exit()
             #button start the game and play the background music
-            if start_button.draw(screen):
+            if start_button.click():
                 game_start = True
                 Background_music.play()
             #button open the shop
-            if shop_button.draw(screen):
+            if shop_button.click():
                 main_menu_status = False
                 shop_status = True
             #button open the inventory
-            if inventory_button.draw(screen):
+            if inventory_button.click():
                 main_menu_status = False
                 inventory_status = True
             
@@ -241,10 +253,12 @@ while run:
             if shop_status:
                 pg.draw.rect(screen, Blue_Cyan, (0, 0, 1920, 1080))
                 draw_text("SHOP", Title_interface, "black", 900, 150)
-                if inventory_button.draw(screen):
+                inventory_button.draw(screen)
+                if inventory_button.click():
                     shop_status = False
                     inventory_status = True
-                if close_interface_button.draw(screen):
+                close_interface_button.draw(screen)
+                if close_interface_button.click():
                     main_menu_status = True
                     shop_status = False
                     
@@ -252,10 +266,12 @@ while run:
             if inventory_status:
                 pg.draw.rect(screen, Blue_Cyan, (0, 0, 1920, 1080))
                 draw_text("INVENTORY", Title_interface, "black", 850, 150)
-                if shop_button.draw(screen):
+                shop_button.draw(screen)
+                if shop_button.click():
                     shop_status = True
                     inventory_status = False
-                if close_interface_button.draw(screen):
+                close_interface_button.draw(screen)
+                if close_interface_button.click():
                     main_menu_status = True
                     inventory_status = False
         
@@ -309,13 +325,15 @@ while run:
         if game_over == False:
             #check if the level has been started or not
             if level_started == False:
-                if begin_button.draw(screen):
+                begin_button.draw(screen)
+                if begin_button.click():
                     level_started  = True
                     
             else:
                 #fast forward option
                 world.game_speed = 1
-                if fast_forward_button.draw(screen):
+                fast_forward_button.draw(screen)
+                if fast_forward_button.click():
                     world.game_speed = 2
             #spawn enemies
                 if pg.time.get_ticks() - last_enemy_spawn > constants.SPAWN_COOLDOWN:
@@ -341,21 +359,25 @@ while run:
             draw_text(str(constants.BUY_COST), text_font, "grey100", constants.SCREEN_WIDTH + 200, 130)
             screen.blit(coin_spritesheets[frame], (constants.SCREEN_WIDTH + 150, 125))
             #
-            if Red_turret_button.draw(screen):
+            Red_turret_button.draw(screen)
+            if Red_turret_button.click():
                 placing_turrets = True
-            if Purple_turret_button.draw(screen):
+            Purple_turret_button.draw(screen)
+            if Purple_turret_button.click():
                 placing_turrets = True
-            if Blue_turret_button.draw(screen):
+            Blue_turret_button.draw(screen)
+            if Blue_turret_button.click():
                 placing_turrets = True
                 #if placing turrets then show the cancel button as well
             if placing_turrets == True:
                 #show cursor turret
-                cursor_rect = cursor_turret.get_rect()
+                cursor_rect = red_cursor_turret.get_rect()
                 cursor_pos = pg.mouse.get_pos()
                 cursor_rect.center = cursor_pos
                 if cursor_pos[0] <= constants.SCREEN_WIDTH:            
-                    screen.blit(cursor_turret, cursor_rect)        
-                if cancel_button.draw(screen):
+                    screen.blit(red_cursor_turret, cursor_rect)
+                cancel_button.draw(screen)        
+                if cancel_button.click():
                     placing_turrets = False
                     print("cancel")
             #if a turret is selected then show the upgrade button
@@ -365,21 +387,25 @@ while run:
                     #show cost of upgrade and draw the button
                     draw_text(str(constants.UPGRADE_COST), text_font, "grey100", constants.SCREEN_WIDTH + 215, 195)
                     screen.blit(coin_spritesheets[frame], (constants.SCREEN_WIDTH + 260, 190))
-                    if upgrade_button.draw(screen):
+                    upgrade_button.draw(screen)
+                    if upgrade_button.click():
                         if world.money >= constants.UPGRADE_COST:
                             selected_turret.upgrade(turret_type="")
                             world.money -= constants.UPGRADE_COST
             
             #setting panel
-            if setting_button.draw(screen):
+            setting_button.draw(screen)
+            if setting_button.click():
                 setting_status = True
             if setting_status:
                 pg.draw.rect(screen, "grey50", (650, 300, 600, 400), border_radius = 30)
                 draw_text("SETTING", large_font, "black", 875, 330)
                 #closing button
-                if close_setting_button.draw(screen):
+                close_setting_button.draw(screen)
+                if close_setting_button.click():
                     setting_status = False
-                if leave_button.draw(screen):
+                leave_button.draw(screen)
+                if leave_button.click():
                     game_start = False
                     Background_music.stop()
                     game_over = False
@@ -402,7 +428,8 @@ while run:
             elif game_outcome == 1:
                 draw_text("YOU WIN!", large_font, "grey0", 315, 230)          
             #restart level
-            if restart_button.draw(screen):
+            restart_button.draw(screen)
+            if restart_button.click():
                 game_over = False
                 level_started = False
                 placing_turrets = False

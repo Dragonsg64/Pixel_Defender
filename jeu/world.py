@@ -1,5 +1,4 @@
 import pygame as pg
-import random
 import constants
 from enemy_data import ENEMY_SPAWN_DATA
 
