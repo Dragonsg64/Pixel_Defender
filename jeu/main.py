@@ -40,77 +40,77 @@ Blue_turret_button = "MACHINE_GUN"
 
 #load images
 #map
-map_image = pg.image.load('levels/map.png').convert_alpha()
+map_image = pg.image.load('../levels/map.png').convert_alpha()
 
 canon_spritesheets = []
 sniper_spritesheets = []
 machineGun_spritesheets = []
 for x in range(1, constants.TURRET_LEVELS + 1):
 #canon spritesheets
-    red_turret_sheet = pg.image.load(f'assets/images/turrets/red_turret_{x}.png').convert_alpha()
+    red_turret_sheet = pg.image.load(f'../assets/images/turrets/red_turret_{x}.png').convert_alpha()
     canon_spritesheets.append(red_turret_sheet)
 #sniper_spritesheets
-    purple_turret_sheet = pg.image.load(f'assets/images/turrets/purple_turret_{x}.png').convert_alpha()
+    purple_turret_sheet = pg.image.load(f'../assets/images/turrets/purple_turret_{x}.png').convert_alpha()
     sniper_spritesheets.append(purple_turret_sheet)
 #machine gun spritesheets
-    blue_turret_sheet = pg.image.load(f'assets/images/turrets/blue_turret_{x}.png').convert_alpha()
+    blue_turret_sheet = pg.image.load(f'../assets/images/turrets/blue_turret_{x}.png').convert_alpha()
     machineGun_spritesheets.append(blue_turret_sheet)
 
 #coin spritesheets
-coin_sheet = pg.image.load('assets/images/coins/coin1.png').convert_alpha()
+coin_sheet = pg.image.load('../assets/images/coins/coin1.png').convert_alpha()
 sprite_sheet = coin.Coin_SpriteSheet(coin_sheet)
 coin_spritesheets = []
 for x in range(constants.COIN_ANIMATION):
     coin_spritesheets.append(sprite_sheet.get_image(x, 33, 32, 1, BLACK))
 
 #turret image for mouse cursor
-red_cursor_turret = pg.image.load('assets/images/turrets/red_cursor_turret.png').convert_alpha()
-purple_cursor_turret = pg.image.load('assets/images/turrets/purple_cursor_turret.png').convert_alpha()
-blue_cursor_turret = pg.image.load('assets/images/turrets/blue_cursor_turret.png').convert_alpha()
+red_cursor_turret = pg.image.load('../assets/images/turrets/red_cursor_turret.png').convert_alpha()
+purple_cursor_turret = pg.image.load('../assets/images/turrets/purple_cursor_turret.png').convert_alpha()
+blue_cursor_turret = pg.image.load('../assets/images/turrets/blue_cursor_turret.png').convert_alpha()
 #enemies
 enemy_images = {
-    "weak": pg.image.load('assets/images/enemies/zombie.png').convert_alpha(),
-    "medium": pg.image.load('assets/images/enemies/thief.png').convert_alpha(),
-    "strong": pg.image.load('assets/images/enemies/knight.png').convert_alpha(),
-    "elite": pg.image.load('assets/images/enemies/robot.png').convert_alpha()
+    "weak": pg.image.load('../assets/images/enemies/zombie.png').convert_alpha(),
+    "medium": pg.image.load('../assets/images/enemies/thief.png').convert_alpha(),
+    "strong": pg.image.load('../assets/images/enemies/knight.png').convert_alpha(),
+    "elite": pg.image.load('../assets/images/enemies/robot.png').convert_alpha()
 }
-enemy_image = pg.image.load('assets/images/enemies/zombie.png').convert_alpha()
+enemy_image = pg.image.load('../assets/images/enemies/zombie.png').convert_alpha()
 #buttons
-start_image = pg.image.load('assets/images/buttons/start.png').convert_alpha()
-shop_image = pg.image.load('assets/images/buttons/shop.png').convert_alpha()
-inventory_image = pg.image.load('assets/images/buttons/inventory.png').convert_alpha()
-buy_RedTurret_image = pg.image.load('assets/images/turrets/buy_red_turret.png').convert_alpha()
-buy_PurpleTurret_image = pg.image.load('assets/images/turrets/buy_Purple_turret.png').convert_alpha()
-buy_BlueTurret_image = pg.image.load('assets/images/turrets/buy_Blue_turret.png').convert_alpha()
-cancel_image = pg.image.load('assets/images/buttons/cancel.png').convert_alpha()
-upgrade_turret_image = pg.image.load('assets/images/buttons/upgrade_turret.png').convert_alpha()
-begin_image = pg.image.load('assets/images/buttons/begin.png').convert_alpha()
-restart_image = pg.image.load('assets/images/buttons/restart.png').convert_alpha()
-fast_forward_image = pg.image.load('assets/images/buttons/fast_forward.png').convert_alpha()
-setting_image = pg.image.load('assets/images/buttons/setting.png').convert_alpha()
-close_interface_image = pg.image.load('assets/images/buttons/close_interface.png').convert_alpha()
-close_setting_image = pg.image.load('assets/images/buttons/close_setting.png').convert_alpha()
-close_app_image = pg.image.load('assets/images/buttons/close_app.png').convert_alpha()
-leave_image = pg.image.load('assets/images/buttons/leave.png').convert_alpha()
+start_image = pg.image.load('../assets/images/buttons/start.png').convert_alpha()
+shop_image = pg.image.load('../assets/images/buttons/shop.png').convert_alpha()
+inventory_image = pg.image.load('../assets/images/buttons/inventory.png').convert_alpha()
+buy_RedTurret_image = pg.image.load('../assets/images/turrets/buy_red_turret.png').convert_alpha()
+buy_PurpleTurret_image = pg.image.load('../assets/images/turrets/buy_Purple_turret.png').convert_alpha()
+buy_BlueTurret_image = pg.image.load('../assets/images/turrets/buy_Blue_turret.png').convert_alpha()
+cancel_image = pg.image.load('../assets/images/buttons/cancel.png').convert_alpha()
+upgrade_turret_image = pg.image.load('../assets/images/buttons/upgrade_turret.png').convert_alpha()
+begin_image = pg.image.load('../assets/images/buttons/begin.png').convert_alpha()
+restart_image = pg.image.load('../assets/images/buttons/restart.png').convert_alpha()
+fast_forward_image = pg.image.load('../assets/images/buttons/fast_forward.png').convert_alpha()
+setting_image = pg.image.load('../assets/images/buttons/setting.png').convert_alpha()
+close_interface_image = pg.image.load('../assets/images/buttons/close_interface.png').convert_alpha()
+close_setting_image = pg.image.load('../assets/images/buttons/close_setting.png').convert_alpha()
+close_app_image = pg.image.load('../assets/images/buttons/close_app.png').convert_alpha()
+leave_image = pg.image.load('../assets/images/buttons/leave.png').convert_alpha()
 
 #gui
-heart_image = pg.image.load('assets/images/gui/heart.png').convert_alpha()
-logo_image = pg.image.load('assets/images/gui/logo.png').convert_alpha()
+heart_image = pg.image.load('../assets/images/gui/heart.png').convert_alpha()
+logo_image = pg.image.load('../assets/images/gui/logo.png').convert_alpha()
 
 #background music 
-Background_music = pg.mixer.Sound ('assets/audio/background_music.mp3')
+Background_music = pg.mixer.Sound ('../assets/audio/background_music.mp3')
 Background_music.set_volume(0)
 
 #load sounds
-shot_fx = pg.mixer.Sound ('assets/audio/shot.wav')
+shot_fx = pg.mixer.Sound ('../assets/audio/shot.wav')
 shot_fx.set_volume(0.5)
 
 #load json data for level
-with open('levels/map.tmj') as file:
+with open('../levels/map.tmj') as file:
     world_data = json.load(file)
 
 #load fonts for displaying text on the screen
-Title_interface = pg.font.Font('assets/fonts/minecraft.ttf', 60)
+Title_interface = pg.font.Font('../assets/fonts/minecraft.ttf', 60)
 text_font = pg.font.SysFont("Consolas", 24, bold = True)
 large_font = pg.font.SysFont("Consolas", 36)
 
@@ -152,22 +152,19 @@ def create_turret(mouse_pos, turret_type):
             # Utilisez le sprite_sheet approprié en fonction du type de tourelle sélectionné
             
                 if Red_turret_button.click():
-                    turret_type = "CANNON"
                     new_turret = Turret(canon_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, turret_type="CANNON")
                     turret_group.add(new_turret)
                     print(Red_turret_button)
+                    world.money -= constants.BUY_COST
                 elif Purple_turret_button.click():
-                    turret_type = "SNIPER"
-                    
-                    
                     new_turret = Turret(sniper_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, turret_type="SNIPER")
                     turret_group.add(new_turret)
                     print(Purple_turret_button)
+                    world.money -= constants.BUY_COST  # Déduisez le coût de la tourelle
                 elif Blue_turret_button.click():
-                    turret_type = "MACHINEGUN"
                     new_turret = Turret(machineGun_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, turret_type="MACHINE_GUN")
                     turret_group.add(new_turret)
-                world.money -= constants.BUY_COST  # Déduisez le coût de la tourelle
+                    world.money -= constants.BUY_COST  # Déduisez le coût de la tourelle
         
             
 def select_turret(mouse_pos):
@@ -379,7 +376,6 @@ while run:
                 cancel_button.draw(screen)        
                 if cancel_button.click():
                     placing_turrets = False
-                    print("cancel")
             #if a turret is selected then show the upgrade button
             if selected_turret:
                 #if a turret can be upgraded then show the upgrade button
@@ -460,7 +456,7 @@ while run:
                     if placing_turrets == True:
                         #check if there is enough money for a turret
                         if world.money >= constants.BUY_COST:
-                            create_turret(mouse_pos, turret_type="")
+                            create_turret(mouse_pos, turret_type="CANNON")
                     else:
                         selected_turret = select_turret(mouse_pos)
 
