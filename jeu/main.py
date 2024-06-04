@@ -154,20 +154,20 @@ def create_turret(mouse_pos, turret_type):
                 space_is_free = False
         if space_is_free:
             if Red_turret:
-                new_turret = Turret(canon_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, turret_type="CANNON")
-                turret_group.add(new_turret)
+                new_Red_turret = Turret(canon_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, turret_type="CANNON")
+                turret_group.add(new_Red_turret)
                 world.money -= constants.BUY_COST
-                print(Red_turret_button)
+                print(red_turret_sheet)
             elif Purple_turret:
-                new_turret = Turret(sniper_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, turret_type="SNIPER")
-                turret_group.add(new_turret)
+                new_Purple_turret = Turret(sniper_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, turret_type="SNIPER")
+                turret_group.add(new_Purple_turret)
                 world.money -= constants.BUY_COST
-                print(Purple_turret_button)
+                print(purple_turret_sheet)
             elif Blue_turret:
-                new_turret = Turret(machineGun_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, turret_type="MACHINE_GUN")
-                turret_group.add(new_turret)
+                new_Blue_turret = Turret(machineGun_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, turret_type="MACHINE_GUN")
+                turret_group.add(new_Blue_turret)
                 world.money -= constants.BUY_COST
-                print(Blue_turret_button)
+                print(blue_turret_sheet)
         
             
 def select_turret(mouse_pos):
@@ -405,6 +405,7 @@ while run:
                     upgrade_button.draw(screen)
                     if upgrade_button.click():
                         if world.money >= constants.UPGRADE_COST:
+                            print(turret_group)
                             selected_turret.upgrade(turret_type="CANNON")
                             world.money -= constants.UPGRADE_COST
             
