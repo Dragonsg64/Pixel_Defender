@@ -6,8 +6,9 @@ from turret_stat import TURRET
 class Turret(pg.sprite.Sprite):
     def __init__(self, sprite_sheets, tile_x, tile_y, shot_fx, turret_type):
         pg.sprite.Sprite.__init__(self)
-        
+
         self.upgrade_level = 1
+        self.turret_type = turret_type
         turret_data = TURRET[turret_type][self.upgrade_level - 1]
         self.range = turret_data["range"]
         self.cooldown = turret_data["cooldown"]
@@ -16,29 +17,27 @@ class Turret(pg.sprite.Sprite):
         self.selected = False
         self.target = None
         
-        #position variables
+        # Position variables
         self.tile_x = tile_x
         self.tile_y = tile_y
-        #calculate center coordinates
         self.x = (self.tile_x + 0.5) * constants.TILE_SIZE
         self.y = (self.tile_y + 0.5) * constants.TILE_SIZE
-        #shot sounf effect
         self.shot_fx = shot_fx
         
-        #animation variables
+        # Animation variables
         self.sprite_sheets = sprite_sheets
         self.animation_list = self.load_images(self.sprite_sheets[self.upgrade_level - 1])
         self.frame_index = 0
         self.update_time = pg.time.get_ticks()
         
-        #update image
+        # Update image
         self.angle = 90
         self.original_image = self.animation_list[self.frame_index]
         self.image = pg.transform.rotate(self.original_image, self.angle)
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
         
-        #create transparent circle showing range
+        # Create transparent circle showing range
         self.range_image = pg.Surface((self.range * 2, self.range * 2))
         self.range_image.fill((0, 0, 0))
         self.range_image.set_colorkey((0, 0, 0))
@@ -48,7 +47,6 @@ class Turret(pg.sprite.Sprite):
         self.range_rect.center = self.rect.center
         
     def load_images(self, sprite_sheet):
-        #extract images from spritesheet
         size = sprite_sheet.get_height()
         animation_list = []
         for x in range(constants.TURRET_ANIMATION):
@@ -57,19 +55,15 @@ class Turret(pg.sprite.Sprite):
         return animation_list
     
     def update(self, enemy_group, world):
-        #if target picked, play firing animation
         if self.target:
             self.play_animation()
         else:
-            #search for new target once turret has cooled down
             if pg.time.get_ticks() - self.last_shot > (self.cooldown / world.game_speed):
                 self.pick_target(enemy_group)
             
     def pick_target(self, enemy_group):
-        #find an enemy to target
         x_dist = 0
         y_dist = 0
-        #check distance to each enemy to see if it is in range
         for enemy in enemy_group:
             if enemy.health > 0:
                 x_dist = enemy.pos[0] - self.x
@@ -78,37 +72,29 @@ class Turret(pg.sprite.Sprite):
                 if dist < self.range:
                     self.target = enemy
                     self.angle = math.degrees(math.atan2(-y_dist, x_dist))
-                    #damage enemy
                     self.target.health -= self.damage
-                    #play sound effect
                     self.shot_fx.play()
                     break
     
     def play_animation(self):
-        #update image
         self.original_image = self.animation_list[self.frame_index]
-        #check if enough time has passed since the last update
         if pg.time.get_ticks() - self.update_time > constants.TURRET_DELAY:
             self.update_time = pg.time.get_ticks()
             self.frame_index += 1
-            #check if the animation has finished and reset to idle
             if self.frame_index >= len(self.animation_list):
                 self.frame_index = 0
-                #record completed time and clear target so cooldown can begin
                 self.last_shot = pg.time.get_ticks()
                 self.target = None
                 
-    def upgrade(self,turret_type):
+    def upgrade(self, turret_type):
         self.upgrade_level += 1
         turret_data = TURRET[turret_type][self.upgrade_level - 1]
         self.range = turret_data["range"]
         self.cooldown = turret_data["cooldown"]
         self.damage = turret_data["damage"]
-        #upgrade turret image
         self.animation_list = self.load_images(self.sprite_sheets[self.upgrade_level - 1])
         self.original_image = self.animation_list[self.frame_index]
         
-        #upgrade range circle
         self.range_image = pg.Surface((self.range * 2, self.range * 2))
         self.range_image.fill((0, 0, 0))
         self.range_image.set_colorkey((0, 0, 0))

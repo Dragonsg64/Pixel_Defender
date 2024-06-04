@@ -37,6 +37,10 @@ inventory_status = False
 Red_turret_button = "CANNON"
 Purple_turret_button = "SNIPER"
 Blue_turret_button = "MACHINE_GUN"
+Red_turret = False
+Purple_turret = False
+Blue_turret = False
+
 
 #load images
 #map
@@ -147,24 +151,23 @@ def create_turret(mouse_pos, turret_type):
             space_is_free = False
         for turret in turret_group:
             if (mouse_tile_x, mouse_tile_y) == (turret.tile_x, turret.tile_y):
-                space_is_free = False      
-        if space_is_free == True:
-            # Utilisez le sprite_sheet approprié en fonction du type de tourelle sélectionné
-            
-                if Red_turret_button.click():
-                    new_turret = Turret(canon_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, turret_type="CANNON")
-                    turret_group.add(new_turret)
-                    print(Red_turret_button)
-                    world.money -= constants.BUY_COST
-                elif Purple_turret_button.click():
-                    new_turret = Turret(sniper_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, turret_type="SNIPER")
-                    turret_group.add(new_turret)
-                    print(Purple_turret_button)
-                    world.money -= constants.BUY_COST  # Déduisez le coût de la tourelle
-                elif Blue_turret_button.click():
-                    new_turret = Turret(machineGun_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, turret_type="MACHINE_GUN")
-                    turret_group.add(new_turret)
-                    world.money -= constants.BUY_COST  # Déduisez le coût de la tourelle
+                space_is_free = False
+        if space_is_free:
+            if Red_turret:
+                new_turret = Turret(canon_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, turret_type="CANNON")
+                turret_group.add(new_turret)
+                world.money -= constants.BUY_COST
+                print(Red_turret_button)
+            elif Purple_turret:
+                new_turret = Turret(sniper_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, turret_type="SNIPER")
+                turret_group.add(new_turret)
+                world.money -= constants.BUY_COST
+                print(Purple_turret_button)
+            elif Blue_turret:
+                new_turret = Turret(machineGun_spritesheets, mouse_tile_x, mouse_tile_y, shot_fx, turret_type="MACHINE_GUN")
+                turret_group.add(new_turret)
+                world.money -= constants.BUY_COST
+                print(Blue_turret_button)
         
             
 def select_turret(mouse_pos):
@@ -355,27 +358,43 @@ while run:
             #for the "turret button" show cost of turret and draw the button
             draw_text(str(constants.BUY_COST), text_font, "grey100", constants.SCREEN_WIDTH + 200, 130)
             screen.blit(coin_spritesheets[frame], (constants.SCREEN_WIDTH + 150, 125))
-            #
             Red_turret_button.draw(screen)
             if Red_turret_button.click():
                 placing_turrets = True
+                Red_turret = True
             Purple_turret_button.draw(screen)
             if Purple_turret_button.click():
                 placing_turrets = True
+                Purple_turret = True
             Blue_turret_button.draw(screen)
             if Blue_turret_button.click():
                 placing_turrets = True
+                Blue_turret = True
                 #if placing turrets then show the cancel button as well
-            if placing_turrets == True:
+            if placing_turrets:
                 #show cursor turret
-                cursor_rect = red_cursor_turret.get_rect()
+                if Red_turret :
+                    cursor_rect = red_cursor_turret.get_rect()
+                elif Purple_turret :
+                    cursor_rect = purple_cursor_turret.get_rect()
+                elif Blue_turret :
+                    cursor_rect = blue_cursor_turret.get_rect()
                 cursor_pos = pg.mouse.get_pos()
                 cursor_rect.center = cursor_pos
-                if cursor_pos[0] <= constants.SCREEN_WIDTH:            
-                    screen.blit(red_cursor_turret, cursor_rect)
+                if cursor_pos[0] <= constants.SCREEN_WIDTH:
+                    if Red_turret :
+                        screen.blit(red_cursor_turret, cursor_rect)
+                    elif Purple_turret :
+                        screen.blit(purple_cursor_turret, cursor_rect)
+                    elif Blue_turret :            
+                        screen.blit(blue_cursor_turret, cursor_rect)
                 cancel_button.draw(screen)        
                 if cancel_button.click():
                     placing_turrets = False
+                    Red_turret = False
+                    Purple_turret = False
+                    Blue_turret = False
+                    
             #if a turret is selected then show the upgrade button
             if selected_turret:
                 #if a turret can be upgraded then show the upgrade button
@@ -386,7 +405,7 @@ while run:
                     upgrade_button.draw(screen)
                     if upgrade_button.click():
                         if world.money >= constants.UPGRADE_COST:
-                            selected_turret.upgrade(turret_type="")
+                            selected_turret.upgrade(turret_type="CANNON")
                             world.money -= constants.UPGRADE_COST
             
             #setting panel
@@ -459,6 +478,10 @@ while run:
                             create_turret(mouse_pos, turret_type="CANNON")
                     else:
                         selected_turret = select_turret(mouse_pos)
+                    Red_turret = False
+                    Purple_turret = False
+                    Blue_turret = False
+                    placing_turrets = False
 
     #update display
     pg.display.flip()
